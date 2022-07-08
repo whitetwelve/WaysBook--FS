@@ -3,27 +3,17 @@ const { cart, book, transactions } = require("../../models")
 exports.addCart = async (req, res) => {
     try {
     
-        const newCart = await cart.create({
-            ...req.body
+        const data = await cart.create({
+            ...req.body,
+            attachment : req.files["attachment"][0].filename
         });
-    
-        // get cart
-        let cartExist = await cart.findOne({
-            where: {
-                id: newCart.id,
-            },
-            attributes: {
-                exclude: ["createdAt", "updatedAt"],
-            },
-        });
-    
-        cartExist = JSON.parse(JSON.stringify(cartExist));
+
     
         // response
         res.status(200).send({
             status: "Success",
             message: "Buku berhasil ditambahkan di cart anda!",
-            data: cartExist,
+            data
         });
         } catch (error) {
         console.log(error);
@@ -37,7 +27,7 @@ exports.addCart = async (req, res) => {
 exports.getCart = async (req, res) => {
     try {
 
-        const data = await cart.findAll({
+        let data = await cart.findAll({
             attributes: {
                 exclude: ['createdAt', 'updatedAt']
             },
@@ -59,6 +49,12 @@ exports.getCart = async (req, res) => {
             ]
         })
 
+        data = data.map((item) => {
+            item.attachment = 'http://localhost:5000/uploadsImg/' + item.attachment
+            
+            return item
+        })
+        
         if(data < 1) {
             return res.send({
                 pesan : "Cartnya kosong, isi dulu ya .."

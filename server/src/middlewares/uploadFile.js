@@ -1,80 +1,66 @@
-// IMPORT PACKAGE
-const multer = require('multer')
+    const multer = require('multer');
 
-
-exports.uploadFile = (imageFile) => {
-
+    exports.uploadFile = (fileData) => {
+    
+    // DESTINASI FILENYA
     const storage = multer.diskStorage({
-        destination : (req, file, cb) => {
-            cb(null, 'uploads')
+        destination: function(req, file, cb) {
+        cb(null, 'uploads')
         },
-        fileName : (req, file, cb) => {
-            cb(null, Date.now() + '-'+ file.originalname.replace(/\s/g, ""));
+        filename: function(req, file, cb){
+        cb(null, Date.now() + '-'+ file.originalname.replace(/\s/g,""));
         }
     })
-
-
-const fileFilter = function(req, file, cb) {
-
-    if(file.fieldname === imageFile){
-        if(!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|WEBP|webp|jfif|JFIF|PDF|pdf|doc|docx)$/)){
+    
+    // FILTER
+    const fileFilter = function (req, file, cb){
+        if(file.fieldname === fileData){
+        if(!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|webp|WEBP|jfif|JFIF|pdf|PDF)$/)){
             req.fileValidationError = {
-                message : 'Tipe file tidak sesuai, harap diulang kembali!'
-                }
-        
-                return cb(new Error("Tipe file tidak sesuai, harap diulang kembali!"), false)
+            message: 'Data file tidak sesuai ..'
             }
+
+            return cb(new Error("Data file tidak sesuai .."), false)
         }
-    cb(null , true)
-}
+        }
+        cb(null, true)
+    }
+
+    // Maximum File Size
+    const size = 1000;
+    const maxSize = size * 1000 * 1000;
+    const limits = {
+        fileSize: maxSize
+    }
 
 
-//SIZING UPLOADS
-const maxSizeUpload = 5 * 1000 * 1000 * 1000
-const limits = {
-
-    fileSize : maxSizeUpload
-
-}
-
-const upload = multer({
-    storage,
-    fileFilter,
-    limits
-}).single(imageFile)
+    const upload = multer({
+        storage,
+        fileFilter,
+        limits
+    }).fields([{ name: 'thumbnail' }, { name: 'bookAttachment' }])
 
 
-return (req, res, next) => {
-    upload(req, res, (err) => {
-
+    return (req, res, next) => {
+        upload(req, res, function (err) {
 
         // Filter
         if(req.fileValidationError){
             return res.send(req.fileValidationError)
         }
+        
 
-
-        // Pengkondisian File empty
-        if(!req.file && !err){    
+        // Limit
+        if(err){
+            if(err.code == "LIMIT_FILE_SIZE"){
             return res.send({
-                message : 'Gambar kosong, harap upload gambar!'
+                message: 'Max file sized 10Mb'
             })
+            }
+            return res.send(err)
         }
 
-
-        // Limit File Upload
-        if(err){
-            console.log(err);
-            if(err.code == "LIMIT_FILE_SIZE"){
-                return res.send({
-                    message : 'Ukuran file terlalu besar!'
-                    })
-                }
-
-                return res.send(err)
-            }
-
-            return next()
+        return next();
         })
     }
-}
+    };

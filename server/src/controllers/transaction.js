@@ -3,7 +3,7 @@ const { user, transactions, book } = require('../../models')
 exports.getTransactions = async (req, res) => {
     try {
 
-        const data = await transactions.findAll({
+        let data = await transactions.findAll({
             attributes: {
                 exclude: ['createdAt', 'updatedAt']
             },
@@ -24,7 +24,12 @@ exports.getTransactions = async (req, res) => {
                 },
             ]
         })
-        console.log(data);
+        
+        data = data.map((item) => {
+            item.attachment = 'http://localhost:5000/uploadsImg/' + item.attachment
+            
+            return item
+        })
 
         if(data == 0) {
             return res.send({
@@ -47,13 +52,16 @@ exports.getTransactions = async (req, res) => {
 
 exports.addTransaction = async (req, res) => {
     try {
-        const data = req.body
-
-        await transactions.create(data)
+        console.log(req.files);
+        const data = await transactions.create({
+            ...req.body,
+            attachment : req.files["attachment"][0].filename
+        })
 
         res.send({
             status  : 'success',
-            message : 'Data transaksi berhasil ditambahkan!'
+            message : 'Data transaksi berhasil ditambahkan!',
+            data
         })
 
     } catch (error) {

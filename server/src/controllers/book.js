@@ -16,9 +16,9 @@ exports.getBooks = async (req, res) => {
                 exclude : [ 'createdAt' , 'updatedAt' , 'idUser' ]
             }
         })
-
         data = data.map((item) => {
-            item.image = 'http://localhost:5000/uploads/' + item.image
+            item.thumbnail = 'http://localhost:5000/uploads/' + item.thumbnail,
+            item.bookAttachment = 'http://localhost:5000/uploadsFile/' + item.bookAttachment
 
             return item
         })
@@ -80,12 +80,12 @@ exports.getDetailBook = async (req, res) => {
 
 exports.addBook = async (req, res) => {
     try {
-
+        
         const data = await book.create({
             ...req.body,
-            thumbnail  : req.file.filename
+            bookAttachment : req.files["bookAttachment"][0].filename,
+            thumbnail : req.files["thumbnail"][0].filename
         })
-
         res.send({
             status  : 'Success!',
             message : 'Data buku berhasil ditambahkan!',

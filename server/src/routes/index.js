@@ -15,6 +15,8 @@ const { register, login, checkAuth} = require("../controllers/auth")
 // MIDDLEWARE
 const { auth } = require('../middlewares/auth')
 const { uploadFile } = require('../middlewares/uploadFile')
+const { uploadFileProfile, uploadFileAttachment } = require('../middlewares/uploadImg')
+
 
 // ROUTES FOR USER
 router.get("/users", getUsers)
@@ -28,14 +30,14 @@ router.delete("/user/:id", deleteUser)
 router.get("/profile/:id", auth, getProfile)
 router.get("/profiles", auth, getProfiles)
 router.patch("/profile/:id", updateProfile)
-router.post("/profile", uploadFile('image'), addProfile)
+router.post("/profile", uploadFileProfile('avatar'), addProfile)
 router.delete("/profile/:id", deleteProfile)
 
 
 // ROUTES FOR BOOKS
 router.get("/books", getBooks)
 router.get("/book/:id", auth, getDetailBook)
-router.post("/books", auth, uploadFile('image'), addBook)
+router.post("/books", auth, uploadFile('thumbnail', 'bookAttachment'), addBook)
 router.patch("/book/:id", updateBook)
 router.delete("/book/:id", deleteBook)
 
@@ -47,14 +49,14 @@ router.delete("/promo-book/:id", deletePromoBook)
 
 
 // ROUTES FOR TRANSACTION
-router.get("/transactions", auth, getTransactions)
-router.post("/transaction", addTransaction)
+router.get("/transactions", auth , getTransactions)
+router.post("/transaction", uploadFileAttachment('attachment'), addTransaction)
 router.delete("/transaction/:id", deleteTransaction)
 
 
 // ROUTES FOR CART
 router.get("/carts", auth, getCart)
-router.post("/cart", auth, addCart)
+router.post("/cart", uploadFileAttachment('attachment'), addCart)
 router.delete("/cart/:id", deleteCart)
 
 // ROUTE FOR AUTH

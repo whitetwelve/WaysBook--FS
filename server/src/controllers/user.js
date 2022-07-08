@@ -246,15 +246,12 @@ exports.updateProfile = async (req, res) => {
 
 exports.addProfile = async (req, res) => {
     try {
-
-        let datas = req.body
-
+        // console.log(req.files["avatar"][0].filename);
         const data = await profile.create({
-            ...datas,
-            image : req.file?.filename
+            ...req.body,
+            avatar : req.files["avatar"][0].filename
         })
-
-
+        
         res.send({
             status  : 'Success!',
             message : 'Data profile berhasil ditambahkan!',
@@ -290,7 +287,7 @@ exports.getProfiles = async (req, res) => {
         })
 
         data = data.map((item) => {
-            item.image = 'http://localhost:5000/uploads/' + item.image
+            item.avatar = 'http://localhost:5000/uploadsImg/' + item.avatar
 
             return item
         })
