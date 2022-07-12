@@ -8,7 +8,7 @@ const jwt      = require('jsonwebtoken')
 exports.register = async (req, res) =>{
 
     const schema = joi.object({
-        fullname    : joi.string().min(3).required(),
+        fullname    : joi.string().min(6).required(),
         email       : joi.string().email().required(),
         password    : joi.number().min(6).required(),
         status      : joi.string().min(5)
@@ -105,6 +105,7 @@ exports.login = async (req, res) => {
             res.status(200).send({
             status: "Login berhasil!",
             data  : {
+                id : dataUser.id,
                 fullname   : dataUser.fullname,
                 email  : dataUser.email,
                 status : dataUser.status,

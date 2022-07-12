@@ -4,3 +4,8 @@ npx sequelize-cli model:generate --name book --attributes title:string,publicati
 npx sequelize-cli model:generate --name transactions --attributes idUser:integer,attachment:string,bookPurchased:integer,totalPayment:integer,status:string
 npx sequelize-cli model:generate --name cart --attributes idTransaction:integer,attachment:string,bookPurchased:integer,totalPayment:integer,status:string
 npx sequelize-cli model:generate --name promoBook --attributes promoBooks:integer
+
+
+npx sequelize-cli model:generate --name chat --attributes message:text,idSender:integer,idReciepient:integer
+
+npx sequelize-cli model:generate --name simplycart --attributes bookPurchased:integer,idProfile:integer

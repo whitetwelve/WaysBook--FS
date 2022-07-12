@@ -9,7 +9,7 @@ const { getUsers, getProfiles, getProfile, addUsers, getUser, updateUser, delete
 const { getBooks, getDetailBook, updateBook, deleteBook, addBook } = require('../controllers/book')
 const { getPromoBooks, addPromoBook, deletePromoBook} = require("../controllers/promoBooks")
 const { getTransactions, addTransaction, deleteTransaction} = require("../controllers/transaction")
-const { addCart, getCart, deleteCart } = require("../controllers/cart")
+const { addCart, getCart, deleteCart, getSimplyCart, addSimplyCart } = require("../controllers/cart")
 const { register, login, checkAuth} = require("../controllers/auth")
 
 // MIDDLEWARE
@@ -27,7 +27,7 @@ router.delete("/user/:id", deleteUser)
 
 
 // ROUTES FOR PROFILE
-router.get("/profile/:id", auth, getProfile)
+router.get("/profile/:id", getProfile)
 router.get("/profiles", auth, getProfiles)
 router.patch("/profile/:id", updateProfile)
 router.post("/profile", uploadFileProfile('avatar'), addProfile)
@@ -36,7 +36,7 @@ router.delete("/profile/:id", deleteProfile)
 
 // ROUTES FOR BOOKS
 router.get("/books", getBooks)
-router.get("/book/:id", auth, getDetailBook)
+router.get("/detail-book/:id", auth, getDetailBook)
 router.post("/books", auth, uploadFile('thumbnail', 'bookAttachment'), addBook)
 router.patch("/book/:id", updateBook)
 router.delete("/book/:id", deleteBook)
@@ -63,5 +63,10 @@ router.delete("/cart/:id", deleteCart)
 router.post("/register" , register)
 router.post("/login" , login)
 router.get("/auth" , auth , checkAuth)
+
+// ROUTE FOR SIMPLYCART
+router.post("/simplycart", addSimplyCart)
+router.get("/simplycart/:id", getSimplyCart)
+
 
 module.exports = router

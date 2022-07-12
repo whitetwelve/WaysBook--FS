@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
           name:"promoBooks"
         }
       })
+
+      book.hasMany(models.simplycart, {
+        as:"simplycart",
+        foreignKey:{
+          name:"bookPurchased"
+        }
+      })
+
 }
 }
   book.init({

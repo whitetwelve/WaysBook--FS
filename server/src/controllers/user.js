@@ -1,11 +1,11 @@
-const { user, profile } = require('../../models') 
+const { user, profiles, book } = require('../../models') 
 
 
 exports.getUsers = async (req ,res) => {
     try {
-        const data = await user.findAll({
+        let data = await user.findAll({
             include : {
-                model : profile,
+                model : profiles,
                 as : 'profile'
             },
             attributes : {
@@ -47,26 +47,48 @@ exports.addUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
     try {
-        const { id } = req.params
+        const { id }  = req.params
         
-        const data = await user.findOne({
+        let users = await user.findOne({
             where : {
                 id
             },
+            include     : [
+                {
+                model       : profiles,
+                as          : 'profile',
+                attributes  : {
+                    exclude : ['createdAt', 'updatedAt']
+                    }
+                },
+                {
+                model       : book,
+                as          : 'books',
+                attributes  : {
+                    exclude : ['createdAt', 'updatedAt']
+                    }
+                }
+            ],
             attributes : {
                 exclude : [ 'password' , 'createdAt' , 'updatedAt' ]
             }
         })
         
-        if(data < 1){
+        if(users < 1){
             return res.send({
                 message : `data user dengan id ${id} tidak ada!`
             })
         }
+
+        // users = JSON.parse(JSON.stringify(users));
+        // users = {
+        //     ...users,
+        // };
+        // console.log(users);
         res.send({
             status  : "success",
             message : `Data user dengan id : ${id} berhasil ditampilkan!`,
-            data
+            users
         })
 
     } catch (error) {
@@ -164,7 +186,7 @@ exports.getProfile = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await profile.findOne({
+        let data = await profiles.findOne({
             where: {
                 id
             },
@@ -183,6 +205,8 @@ exports.getProfile = async (req, res) => {
         if(data == null || data < 1){
             return res.send({message : `Data profile dengan id ${id} tidak ditemukan!`})
         }
+
+        console.log(data);
         res.send({
             status: 'success',
             message:`data profile dengan id: ${id} berhasil ditampilkan!`,
@@ -203,7 +227,7 @@ exports.updateProfile = async (req, res) => {
         
         const newData = req.body
 
-        const data = await profile.findOne({
+        const data = await profiles.findOne({
             where : {
                 id
             },
@@ -218,7 +242,7 @@ exports.updateProfile = async (req, res) => {
             })
         }
 
-        await profile.update(newData, {
+        await profiles.update(newData, {
             where : {
                 id
             },
@@ -247,7 +271,7 @@ exports.updateProfile = async (req, res) => {
 exports.addProfile = async (req, res) => {
     try {
         // console.log(req.files["avatar"][0].filename);
-        const data = await profile.create({
+        const data = await profiles.create({
             ...req.body,
             avatar : req.files["avatar"][0].filename
         })
@@ -271,7 +295,7 @@ exports.addProfile = async (req, res) => {
 exports.getProfiles = async (req, res) => {
     try {
 
-        let data = await profile.findAll({
+        let data = await profiles.findAll({
             include : [
                 {
                 model : user,
@@ -318,7 +342,7 @@ exports.deleteProfile = async (req, res) => {
     try {
         const { id } = req.params
 
-        const data = await profile.findOne({
+        const data = await profiles.findOne({
             where : {
                 id
             }
@@ -330,7 +354,7 @@ exports.deleteProfile = async (req, res) => {
             })
         }
 
-        await profile.destroy({
+        await profiles.destroy({
             where : {
                 id
             }

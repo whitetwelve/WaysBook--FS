@@ -18,7 +18,7 @@ exports.getPromoBooks = async (req, res) => {
         })
 
         data = data.map((item) => {
-            item.image = 'http://localhost:5000/uploads/' + item.image
+            item.book.thumbnail = 'http://localhost:5000/uploads/' + item.book.thumbnail
 
             return item
         })

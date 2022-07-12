@@ -57,12 +57,25 @@ exports.getDetailBook = async (req, res) => {
                 exclude : [ 'createdAt' , 'updatedAt' , 'idUser' ]
             }
         })
-
-        if(data <= 1){
+        if(data < 1){
             return res.send({
                 message : `Buku dengan id ${id} tidak ditemukan!`
             })
         }
+        data = {
+            title : data.title,
+            publicationDate : data.publicationDate,
+            pages : data.pages,
+            ISBN : data.ISBN,
+            price : data.price,
+            description : data.description,
+            author : data.author,
+            bookAttachment : `http://localhost:5000/uploads/` + data.bookAttachment,
+            thumbnail : `http://localhost:5000/uploads/` + data.thumbnail,
+
+        }
+        
+
         res.send({
             status  : 'Success!',
             message : `Data produk id :${id} berhasil ditampilkan!`,
